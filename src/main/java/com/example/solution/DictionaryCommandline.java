@@ -14,7 +14,7 @@ public class DictionaryCommandline {
     public List<String> showAllWordsWord(Dictionary dictionar) {
         List<String> line = new ArrayList<>();
         for (int i = 0; i < dictionar.list_word.size(); i++) {
-            String english = dictionar.list_word.get(i).getWord_target() + "\n \n" + dictionar.list_word.get(i).getWord_explain() + "***********************************\n***********************************";
+            String english = dictionar.list_word.get(i).getWord_target() + " : " + dictionar.list_word.get(i).getWord_explain();
             line.add(english);
         }
         return line;
@@ -22,11 +22,17 @@ public class DictionaryCommandline {
 
     public List<String> suggestWord(Dictionary dictionary, String input) {
         List<String> line = new ArrayList<>();
+        boolean isStart = false;
         for(int i = 0; i < dictionary.list_word.size(); i++) {
             String english = dictionary.get(i).getWord_target();
             if(english.length() >= input.length()) {
-                if(english.substring(0,input.length()).equals(input)) {
+                if (dictionary.get(i).getWord_target().substring(0, input.length()).equals(input)) {
+                    isStart = true;
                     line.add(dictionary.get(i).getWord_target());
+                } else {
+                    if (isStart) {
+                        break;
+                    }
                 }
             }
         }

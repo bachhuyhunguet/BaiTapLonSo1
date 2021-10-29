@@ -7,6 +7,7 @@ import java.util.Scanner;
 
 public class DictionaryManagement {
     public static String url = "E:\\dictionary\\javafx\\input\\dictionaries.txt";
+    public static String urlNote = "E:\\dictionary\\javafx\\input\\note.txt";
 
     public Dictionary InsertFromFile(Dictionary dictionary, String url) throws FileNotFoundException {
         File input = new File(url);
@@ -60,6 +61,25 @@ public class DictionaryManagement {
         return dictionary;
     }
 
+    public void InsertFromFileNote(Dictionary dictionary, String url) {
+        String data = null;
+        try {
+            File myObj = new File(url);
+            Scanner myReader = new Scanner(myObj);
+            while (myReader.hasNextLine()) {
+                data = myReader.nextLine();
+                Word word = new Word();
+                word.setWord_target(data.split("_")[0]);
+                word.setWord_explain(data.split("_")[1]);
+                dictionary.add(word);
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+
     public void dictionaryExportToFile(Dictionary dictionary) throws IOException {
         FileWriter writer = new FileWriter(this.url);
         for(int i = 0; i < dictionary.size(); i++) {
@@ -72,16 +92,16 @@ public class DictionaryManagement {
         writer.close();
     }
 
-    public String dictionaryLookup(Dictionary dictionary, String input) {
-        String ouput = "";
-        for (int i = 0; i < dictionary.size(); i++) {
-            if (input.equals(dictionary.get(i).getWord_target())) {
-                ouput += dictionary.get(i).getWord_explain();
-                break;
+    public void dictionaryExportToFileNote(Dictionary dictionary) throws IOException {
+        FileWriter writer = new FileWriter(this.urlNote);
+        for(int i = 0; i < dictionary.size(); i++) {
+            String data = dictionary.get(i).getWord_target() + "_" + dictionary.get(i).getWord_explain();
+            if(i != dictionary.size() - 1) {
+                data += '\n';
             }
+            writer.write(data);
         }
-        System.out.println(ouput);
-        return ouput;
+        writer.close();
     }
 
     public static boolean check_in_listview(ListView <String> listView, String s) {

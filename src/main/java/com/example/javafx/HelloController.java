@@ -48,6 +48,8 @@ public class HelloController implements Initializable {
     public AnchorPane contentSetting;
     public AnchorPane contentGame;
 
+    public Game game;
+
     private void init() {
         this.animationApp = new AnimationApp();
         this.buttons.add(this.bgSearch);
@@ -68,9 +70,10 @@ public class HelloController implements Initializable {
         search.init();
         search.searchSol();
         //run game
-        Game game = new Game(this.contentGame);
+        game = new Game(this.contentGame);
         game.initGame();
     }
+
 
     public static Dictionary dictionaryEnglish = new Dictionary(); // dich tu tieng Anh sang tieng Viet
     public static Dictionary dictionaryVietnamese = new Dictionary(); // dich tu Tieng Viet sang Tieng Viet
@@ -100,9 +103,6 @@ public class HelloController implements Initializable {
 
     @FXML
     private AnchorPane contentFix;
-
-    @FXML
-    private Button buttonAdd;
 
     @FXML
     private TextField inputEnglish;
@@ -161,7 +161,7 @@ public class HelloController implements Initializable {
             new_word = null;
         }
         if (dictionaryCommandline.Add(dictionary, new_word)) {
-            dictionaryManagement.dictionaryExportToFile(dictionary);
+            dictionaryManagement.dictionaryExportToFileNote(dictionary);
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("thông báo");
@@ -169,6 +169,7 @@ public class HelloController implements Initializable {
             System.out.println("Từ này đã có trong danh sách yêu thích");
             alert.show();
         }
+        game.loadGame();
     }
 
     @FXML
@@ -179,7 +180,8 @@ public class HelloController implements Initializable {
             announce = "Chưa nhập từ cần xóa";
         }
         if (dictionaryCommandline.Delete(dictionary, word)) {
-            dictionaryManagement.dictionaryExportToFile(dictionary);
+            dictionaryManagement.dictionaryExportToFileNote(dictionary);
+            game.loadGame();
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("thông báo");
@@ -247,9 +249,11 @@ public class HelloController implements Initializable {
                 stage.initOwner(
                         ((Node) event.getSource()).getScene().getWindow());
                 stage.show();
+                game.loadGame();
             }
         }
     }
+
 
     @FXML
     void anchorDelete(ActionEvent event) {
@@ -272,7 +276,8 @@ public class HelloController implements Initializable {
             String word = suggestDelete.getSelectionModel().getSelectedItem();
             System.out.println(word);
             if (dictionaryCommandline.Delete(dictionary, word)) {
-                dictionaryManagement.dictionaryExportToFile(dictionary);
+                dictionaryManagement.dictionaryExportToFileNote(dictionary);
+                game.loadGame();
             }
             else {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -334,13 +339,11 @@ public class HelloController implements Initializable {
         input.setText("");
         output.setText("");
         if (count % 2 == 0) {
-            buttonAdd.setVisible(true);
             VietNam.setVisible(true);
             America.setVisible(true);
             VietNam1.setVisible(false);
             America1.setVisible(false);
         } else {
-            buttonAdd.setVisible(false);
             VietNam.setVisible(false);
             America.setVisible(false);
             VietNam1.setVisible(true);
@@ -396,36 +399,13 @@ public class HelloController implements Initializable {
         }
     }
 
-    @FXML
-    void addInOffline(ActionEvent event) throws IOException {
-        String target = input.getText().trim().toLowerCase();
-        String explain = output.getText().trim().toLowerCase();
-        String announce = "Không thêm vào được";
-
-        Word new_word = new Word(target,explain);
-        if (target.isEmpty() || explain.isEmpty()) {
-            new_word = null;
-        }
-        if (dictionaryCommandline.Add(dictionary, new_word)) {
-            dictionaryManagement.dictionaryExportToFile(dictionary);
-        }
-        else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("thông báo");
-            alert.setHeaderText(announce);
-            System.out.println("Từ này đã có trong danh sách yêu thích");
-            alert.show();
-        }
-    }
-
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
             String urlE = "E:\\dictionary\\javafx\\input\\English.txt";
-            String urlD = "E:\\dictionary\\javafx\\input\\dictionaries.txt";
+            String urlD = "E:\\dictionary\\javafx\\input\\note.txt";
             String urlV = "E:\\dictionary\\javafx\\input\\Vietnamese.txt";
-            dictionaryManagement.InsertFromFile(dictionary, urlD);
+            dictionaryManagement.InsertFromFileNote(dictionary, urlD);
             dictionaryManagement.InsertFromFile(dictionaryEnglish, urlE);
             dictionaryManagement.InsertFromFile(dictionaryVietnamese, urlV);
         } catch (FileNotFoundException e) {
@@ -504,8 +484,8 @@ public class HelloController implements Initializable {
         suggest.setVisible(false);
         suggestDelete.setVisible(false);
         suggestFix.setVisible(false);
-        if (count % 2 == 0) buttonAdd.setVisible(true);
         this.init();
+
         Search test = new Search(this.inputSearch, this.submitSearch, this.contentSearch, this.imageNotFound);
         test.init();
         test.searchSol();

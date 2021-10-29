@@ -53,11 +53,39 @@ public class Game {
                 Document doc = webEngine.getDocument();
                 doc.getElementById("dataNote").setAttribute("data-dataNote", finalData);
                 if(finalCount >= 4) {
-                    this.webEngine.executeScript("activeButtonNote()");
+                    this.webEngine.executeScript("  btnSubmitNote.classList.add(\"btn-submit-note--active\")");
+                } else {
+                    this.webEngine.executeScript("  btnSubmitNote.classList.remove(\"btn-submit-note--active\")");
                 }
             }
         });
-        this.main.getChildren().add(this.webView);
+            this.main.getChildren().add(this.webView);
     }
 
+    public void loadGame() {
+        int count = 0;
+        String data = "";
+        try {
+            File myObj = new File("E:\\dictionary\\javafx\\input\\note.txt");
+            Scanner myReader = new Scanner(myObj);
+            while (myReader.hasNextLine()) {
+                data += myReader.nextLine() + "__";
+                count ++;
+            }
+            data = data.substring(0, data.length() - 2);
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+        String finalData = data;
+        int finalCount = count;
+        Document doc = webEngine.getDocument();
+        doc.getElementById("dataNote").setAttribute("data-dataNote", finalData);
+        if(finalCount >= 4) {
+            this.webEngine.executeScript("  btnSubmitNote.classList.add(\"btn-submit-note--active\")");
+        } else {
+            this.webEngine.executeScript("  btnSubmitNote.classList.remove(\"btn-submit-note--active\")");
+        }
+    }
 }

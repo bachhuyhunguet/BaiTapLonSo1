@@ -1,5 +1,4 @@
-hello_xin chào
-back_quay lại
+add_áđ
 dictionary_từ điển
 content_nội dung
-data_dữ liệu
+hello_xin 
